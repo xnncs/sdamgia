@@ -9,19 +9,28 @@ namespace Application.Services;
 
 public class SchoolService : ISchoolService
 {
-    public SchoolService(ITeacherRepository teacherRepository, IStudentRepository studentRepository, ISchoolRepository schoolRepository, IUserRepository userRepository, IMapper mapper)
+    public SchoolService(ITeacherRepository teacherRepository, IStudentRepository studentRepository, 
+        ISchoolRepository schoolRepository, IUserRepository userRepository, IPostRepository postRepository,
+        IMapper mapper)
     {
         _userRepository = userRepository;
+        
         _teacherRepository = teacherRepository;
         _studentRepository = studentRepository;
+        
         _schoolRepository = schoolRepository;
+
+        _postRepository = postRepository;
         
         
         _mapper = mapper;
     }
 
+    private readonly IPostRepository _postRepository;
+    
     private readonly IUserRepository _userRepository;
     private readonly ISchoolRepository _schoolRepository;
+    
     private readonly ITeacherRepository _teacherRepository;
     private readonly IStudentRepository _studentRepository;
     
@@ -38,7 +47,7 @@ public class SchoolService : ISchoolService
             throw new Exception("This teacher already has school");
         }
         
-        School school = GenerateSchoolObject(request, teacher);
+        School school = GenerateSchoolObjectOnCreatingSchool(request, teacher);
 
         await _schoolRepository.AddSchoolAsync(school);
     }
@@ -110,19 +119,29 @@ public class SchoolService : ISchoolService
 
     public async Task CreatePost(CreatePostRequestDto request)
     {
-        throw new NotImplementedException();
+        await CheckTeacherPermissionsAsync(request.UserId);
+        
+        int schoolId = await GetSchoolIdByUserIdForTeacherAsync(request.UserId);
+
+        Post post = Post.Create(request.Data);
+
+        await _postRepository.AddAsync(schoolId, post);
     }
 
-    public async Task EditPost(EditPostRequestDto request)
+    public async Task UpdatePost(EditPostRequestDto request)
     {
-        throw new NotImplementedException();
+        await CheckTeacherPermissionsAsync(request.UserId);
+
+        await _postRepository.UpdateAsync(request.Data, request.PostId);
     }
 
     public async Task DeletePost(DeletePostRequestDto request)
     {
-        throw new NotImplementedException();
-    }
+        await CheckTeacherPermissionsAsync(request.UserId);
 
+        await _postRepository.DeleteAsync(request.PostId);
+    }
+    
     private async Task<School?> GetSchoolByUserIdAsyncHelper(int userId)
     {
         User user = await _userRepository.GetByIdAsync(userId)
@@ -157,7 +176,7 @@ public class SchoolService : ISchoolService
         int teacherIdValue = teacherId.Value;
         
         
-        School school = await _teacherRepository.GetSchoolByTeacherIdAsync(teacherIdValue)
+        School school = await _schoolRepository.GetSchoolByTeacherIdAsync(teacherIdValue)
                         ?? throw new Exception("That teacher does not have a school");
         return school.Id!.Value;
     }
@@ -216,7 +235,7 @@ public class SchoolService : ISchoolService
         }
     }
     
-    private School GenerateSchoolObject(CreateSchoolRequestDto request, Teacher teacher)
+    private School GenerateSchoolObjectOnCreatingSchool(CreateSchoolRequestDto request, Teacher teacher)
     {
         return School.CreateSchool(
             request.CourseName,

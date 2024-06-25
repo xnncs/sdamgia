@@ -2,6 +2,15 @@ namespace Core.Models;
 
 public record Post
 {
+    public static Post Create(string data)
+    {
+        return new Post
+        {
+            Data = data,
+            DateOfCreating = DateTime.UtcNow
+        };
+    }
+    
     public int? Id { get; set; } = null;
     // html
     public string Data { get; set; }

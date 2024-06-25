@@ -49,6 +49,8 @@ services.AddScoped<IStudentRepository, StudentRepository>();
 
 services.AddScoped<ISchoolRepository, SchoolRepository>();
 
+services.AddScoped<IPostRepository, PostRepository>();
+
 
 // adding db contexts
 services.AddDbContext<ApplicationDbContext>(options =>

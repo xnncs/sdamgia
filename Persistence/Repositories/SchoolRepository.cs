@@ -34,6 +34,7 @@ public class SchoolRepository : ISchoolRepository
             .Include(x => x.Author)
             .Include(x => x.Students)
             .Include(x => x.Page)
+            .ThenInclude(x => x.Posts)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return _mapper.Map<SchoolEntity?, School?>(schoolEntity);
@@ -41,12 +42,24 @@ public class SchoolRepository : ISchoolRepository
 
     public async Task<School?> GetSchoolByTeacherIdAsync(int teacherId)
     {
-        throw new NotImplementedException();
+        TeacherEntity teacher = await _dbContext.Teachers.AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.Id == teacherId)
+                                ?? throw new Exception("No such teachers with that id");
+
+        int schoolId = teacher.SchoolId!.Value;
+
+        return await GetSchoolByIdAsync(schoolId);
     }
 
     public async Task<School?> GetSchoolByStudentIdAsync(int studentId)
     {
-        throw new NotImplementedException();
+        StudentEntity student = await _dbContext.Students.AsNoTracking()
+                                    .FirstOrDefaultAsync(x => x.Id == studentId)
+                                ?? throw new Exception("No such students with that id");
+
+        int schoolId = student.SchoolId!.Value;
+
+        return await GetSchoolByIdAsync(schoolId);
     }
 
     public async Task AddStudentToSchoolAsync(Student student, int schoolId)

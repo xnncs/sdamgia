@@ -13,7 +13,7 @@ public interface ISchoolService
     Task DeleteSchool(DeleteSchoolRequestDto request);
 
     Task CreatePost(CreatePostRequestDto request);
-    Task EditPost(EditPostRequestDto request);
+    Task UpdatePost(EditPostRequestDto request);
     Task DeletePost(DeletePostRequestDto request);
     
 }

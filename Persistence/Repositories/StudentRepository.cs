@@ -45,12 +45,18 @@ public class StudentRepository : IStudentRepository
         UserEntity? userEntity = await _dbContext.Users
             .Include(x => x.Student)
             .FirstOrDefaultAsync(x => x.Id == userId);
+        
         if (userEntity == null)
         {
             return null;
         }
 
-        return userEntity?.Student.Id;
+        if (userEntity.Student == null)
+        {
+            throw new Exception("This user is not a teacher");
+        }
+
+        return userEntity?.Student!.Id;
     }
 
     public async Task<bool> HasSchoolBylIdAsync(int studentId)

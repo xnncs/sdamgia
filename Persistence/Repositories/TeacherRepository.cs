@@ -48,17 +48,6 @@ public class TeacherRepository : ITeacherRepository
             .AnyAsync(x => x.Author.Id == teacherId);
     }
 
-    public async Task<School?> GetSchoolByTeacherIdAsync(int teacherId)
-    {
-        SchoolEntity? schoolEntity = await _dbContext.Schools.AsNoTracking()
-            .Include(x => x.Students)
-            .Include(x => x.Page)
-            .Include(x => x.Author)
-            .FirstOrDefaultAsync(x => x.Author.Id == teacherId);
-
-        return _mapper.Map<SchoolEntity?, School?>(schoolEntity);
-    }
-
     public async Task<int?> GetTeacherIdByUserIdAsync(int userId)
     {
         TeacherEntity teacherEntity = await _dbContext.Teachers.AsNoTracking()

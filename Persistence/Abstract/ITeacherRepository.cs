@@ -9,6 +9,5 @@ public interface ITeacherRepository
     Task<bool> IsTeacherByUserIdAsync(int userId);
     Task<Teacher?> GetByUserIdAsync(int userId);
     Task<bool> HasSchoolByIdAsync(int teacherId);
-    Task<School?> GetSchoolByTeacherIdAsync(int teacherId);
     Task<int?> GetTeacherIdByUserIdAsync(int userId);
 }

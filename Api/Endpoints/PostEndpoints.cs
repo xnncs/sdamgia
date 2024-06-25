@@ -15,8 +15,8 @@ public static class PostEndpoints
         // POST: api/school/posts/create
         endpoints.MapPost("create", CreatePostAsync);
 
-        // PUT: api/school/posts/edit
-        endpoints.MapPut("edit", EditPostAsync);
+        // PUT: api/school/posts/update
+        endpoints.MapPut("update", UpdatePostAsync);
 
         // DELETE: api/school/posts/delete/{postId}
         endpoints.MapDelete("delete/{postId}", DeletePostAsync);
@@ -36,13 +36,13 @@ public static class PostEndpoints
         return TypedResults.Ok();
     }
 
-    private static async Task<IResult> EditPostAsync(EditPostRequest request, IAuthorizationService authorizationService,
+    private static async Task<IResult> UpdatePostAsync(EditPostRequest request, IAuthorizationService authorizationService,
         HttpContext context, ISchoolService schoolService, IMapper mapper)
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
         EditPostRequestDto contract = GenerateEditPostRequestDtoObject(request, userId, mapper);
 
-        await schoolService.EditPost(contract);
+        await schoolService.UpdatePost(contract);
 
         return TypedResults.Ok();
     }
