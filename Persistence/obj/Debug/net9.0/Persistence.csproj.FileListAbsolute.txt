@@ -1,0 +1,17 @@
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Persistence.deps.json
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Persistence.runtimeconfig.json
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Persistence.dll
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Persistence.pdb
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Core.dll
+D:\code\codes\Sdamgia\Persistence\bin\Debug\net9.0\Core.pdb
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.csproj.AssemblyReference.cache
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.GeneratedMSBuildEditorConfig.editorconfig
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.AssemblyInfoInputs.cache
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.AssemblyInfo.cs
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.csproj.CoreCompileInputs.cache
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persiste.61C28332.Up2Date
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.dll
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\refint\Persistence.dll
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.pdb
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\Persistence.genruntimeconfig.cache
+D:\code\codes\Sdamgia\Persistence\obj\Debug\net9.0\ref\Persistence.dll
