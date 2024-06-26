@@ -6,6 +6,7 @@ public record ExamTaskEntity
 {
     public int Id { get; set; }
     public Subjects Subject { get; set; }
+    public double Prototype { get; set; }
     // html
     public string Data { get; set; }
     

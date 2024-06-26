@@ -1,6 +1,6 @@
 using Core.Structures;
 
-namespace Application.Dto;
+namespace Application.Dto.School;
 
 public class CreateSchoolRequestDto
 {

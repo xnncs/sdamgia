@@ -1,6 +1,8 @@
 using Api.Contracts.Requests;
+using Api.Contracts.Requests.Post;
 using Application.Abstract;
 using Application.Dto;
+using Application.Dto.Post;
 using AutoMapper;
 
 namespace Api.Endpoints;

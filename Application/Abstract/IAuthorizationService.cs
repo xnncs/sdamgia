@@ -1,4 +1,5 @@
 using Application.Dto;
+using Application.Dto.Auth;
 using Infrastructure.Abstract;
 using Microsoft.AspNetCore.Http;
 

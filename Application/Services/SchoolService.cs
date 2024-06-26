@@ -1,5 +1,7 @@
 using Application.Abstract;
 using Application.Dto;
+using Application.Dto.Post;
+using Application.Dto.School;
 using AutoMapper;
 using Core.Models;
 using Persistence.Abstract;
@@ -11,7 +13,7 @@ public class SchoolService : ISchoolService
 {
     public SchoolService(ITeacherRepository teacherRepository, IStudentRepository studentRepository, 
         ISchoolRepository schoolRepository, IUserRepository userRepository, IPostRepository postRepository,
-        IMapper mapper)
+        ISchoolPermissionsHelper schoolPermissionsHelper, IMapper mapper)
     {
         _userRepository = userRepository;
         
@@ -21,7 +23,8 @@ public class SchoolService : ISchoolService
         _schoolRepository = schoolRepository;
 
         _postRepository = postRepository;
-        
+
+        _permissionsHelper = schoolPermissionsHelper;
         
         _mapper = mapper;
     }
@@ -33,12 +36,14 @@ public class SchoolService : ISchoolService
     
     private readonly ITeacherRepository _teacherRepository;
     private readonly IStudentRepository _studentRepository;
+
+    private readonly ISchoolPermissionsHelper _permissionsHelper;
     
     private readonly IMapper _mapper;
 
     public async Task CreateSchoolAsync(CreateSchoolRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.AuthorId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.AuthorId);
 
         Teacher teacher = await _teacherRepository.GetByUserIdAsync(request.AuthorId)
                           ?? throw new Exception("No such students with that userId");
@@ -54,7 +59,7 @@ public class SchoolService : ISchoolService
 
     public async Task JoinSchoolAsync(JoinSchoolRequestDto request)
     {
-        await CheckStudentPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckStudentPermissionsAsync(request.UserId);
         
         Student student = await _studentRepository.GetByUserIdAsync(request.UserId)
                           ?? throw new Exception();
@@ -72,14 +77,14 @@ public class SchoolService : ISchoolService
 
     public async Task<School?> GetByUserIdAsync(int userId)
     {
-        await CheckSchoolExistenceByUserIdAsync(userId);
+        await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(userId);
 
         return await GetSchoolByUserIdAsyncHelper(userId);
     }
     
     public async Task LeaveSchool(int userId)
     {
-        await CheckStudentPermissionsAsync(userId);
+        await _permissionsHelper.CheckStudentPermissionsAsync(userId);
 
         int? studentId = await _studentRepository.GetStudentIdByUserIdAsync(userId);
         if (studentId == null)
@@ -89,16 +94,16 @@ public class SchoolService : ISchoolService
 
         int studentIdValue = studentId.Value;
         
-        await CheckSchoolExistenceByUserIdAsync(userId);
+        await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(userId);
 
         await _schoolRepository.LeaveSchoolAsync(studentIdValue);
     }
 
     public async Task UpdateSchool(UpdateSchoolRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
         
-        await CheckSchoolExistenceByUserIdAsync(request.UserId);
+        await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(request.UserId);
 
         int schoolId = await GetSchoolIdByUserIdForTeacherAsync(request.UserId);
         SchoolUpdatingModel model = _mapper.Map<UpdateSchoolRequestDto, SchoolUpdatingModel>(request);
@@ -108,9 +113,9 @@ public class SchoolService : ISchoolService
     
     public async Task DeleteSchool(DeleteSchoolRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
-        await CheckSchoolExistenceByUserIdAsync(request.UserId);
+        await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(request.UserId);
 
         int schoolId = await GetSchoolIdByUserIdForTeacherAsync(request.UserId);
 
@@ -119,7 +124,7 @@ public class SchoolService : ISchoolService
 
     public async Task CreatePost(CreatePostRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
         
         int schoolId = await GetSchoolIdByUserIdForTeacherAsync(request.UserId);
 
@@ -130,16 +135,33 @@ public class SchoolService : ISchoolService
 
     public async Task UpdatePost(EditPostRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
         await _postRepository.UpdateAsync(request.Data, request.PostId);
     }
 
     public async Task DeletePost(DeletePostRequestDto request)
     {
-        await CheckTeacherPermissionsAsync(request.UserId);
+        await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
         await _postRepository.DeleteAsync(request.PostId);
+    }
+    
+    private async Task<int> GetSchoolIdByUserIdForTeacherAsync(int userId)
+    {
+        await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(userId);
+
+        int? teacherId = await _teacherRepository.GetTeacherIdByUserIdAsync(userId);
+        if (teacherId == null)
+        {
+            throw new Exception("This user is not teacher");
+        }
+        int teacherIdValue = teacherId.Value;
+        
+        
+        School school = await _schoolRepository.GetSchoolByTeacherIdAsync(teacherIdValue)
+                        ?? throw new Exception("That teacher does not have a school");
+        return school.Id!.Value;
     }
     
     private async Task<School?> GetSchoolByUserIdAsyncHelper(int userId)
@@ -162,77 +184,6 @@ public class SchoolService : ISchoolService
         }
 
         throw new Exception("This user does not have a school");
-    }
-    
-    private async Task<int> GetSchoolIdByUserIdForTeacherAsync(int userId)
-    {
-        await CheckSchoolExistenceByUserIdAsync(userId);
-
-        int? teacherId = await _teacherRepository.GetTeacherIdByUserIdAsync(userId);
-        if (teacherId == null)
-        {
-            throw new Exception("This user is not teacher");
-        }
-        int teacherIdValue = teacherId.Value;
-        
-        
-        School school = await _schoolRepository.GetSchoolByTeacherIdAsync(teacherIdValue)
-                        ?? throw new Exception("That teacher does not have a school");
-        return school.Id!.Value;
-    }
-
-
-    private async Task CheckSchoolExistenceByUserIdAsync(int userId)
-    {
-        User user = await _userRepository.GetByIdAsync(userId)
-                    ?? throw new Exception("No such users with that id");
-        
-        if (user.Teacher != null)
-        {
-            CheckSchoolExistenceForTeacher(user.Teacher);
-            return;
-        }
-
-        if (user.Student != null)
-        {
-            CheckSchoolExistenceForStudent(user.Student);
-            return;
-        }
-
-        throw new Exception("That user is not student nor teacher");
-    }
-
-    private void CheckSchoolExistenceForTeacher(Teacher teacher, string exceptionMessage = "That teacher does not have a school")
-    {
-        if (teacher.School == null)
-        {
-            throw new Exception(exceptionMessage);
-        }
-    }
-    
-    private void CheckSchoolExistenceForStudent(Student student, string exceptionMessage = "That student does not have a school")
-    {
-        if (student.School == null)
-        {
-            throw new Exception(exceptionMessage);
-        }
-    }
-    
-    private async Task CheckStudentPermissionsAsync(int userId, string exceptionMessage = "You have no student permissions to do it")
-    {
-        bool isStudent = await _studentRepository.IsStudentByUserIdAsync(userId);
-        if (!isStudent)
-        {
-            throw new Exception(exceptionMessage);
-        }
-    }
-    private async Task CheckTeacherPermissionsAsync(int authorId, string exceptionMessage = "You have no teacher permissions to do it")
-    {
-        bool isTeacher = await _teacherRepository.IsTeacherByUserIdAsync(authorId);
-        if (!isTeacher)
-        {
-            throw new Exception(exceptionMessage);
-        }
     }
     
     private School GenerateSchoolObjectOnCreatingSchool(CreateSchoolRequestDto request, Teacher teacher)

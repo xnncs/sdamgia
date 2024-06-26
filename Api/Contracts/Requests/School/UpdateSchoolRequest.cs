@@ -1,4 +1,4 @@
-namespace Api.Contracts.Requests;
+namespace Api.Contracts.Requests.School;
 
 public record UpdateSchoolRequest
 {

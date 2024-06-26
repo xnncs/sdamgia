@@ -1,6 +1,6 @@
 using Core.Structures;
 
-namespace Api.Contracts.Requests;
+namespace Api.Contracts.Requests.School;
 
 public record CreateSchoolRequest
 {

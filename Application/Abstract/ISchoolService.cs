@@ -1,4 +1,6 @@
 using Application.Dto;
+using Application.Dto.Post;
+using Application.Dto.School;
 using Core.Models;
 
 namespace Application.Abstract;

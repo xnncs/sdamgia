@@ -9,5 +9,6 @@ public static class ApiEndpointsExtensions
         app.MapAuthEndpoints();
         app.MapSchoolEndpoints();
         app.MapPostEndpoints();
+        app.MapExamTaskEndpoints();
     }
 }

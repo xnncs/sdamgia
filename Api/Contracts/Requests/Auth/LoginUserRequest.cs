@@ -1,6 +1,6 @@
-namespace Application.Dto;
+namespace Api.Contracts.Requests.Auth;
 
-public record LoginUserRequestDto
+public record LoginUserRequest
 {
     public string Email { get; set; }
     public string Password { get; set; }

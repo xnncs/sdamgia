@@ -1,7 +1,9 @@
 using Api.Contracts;
 using Api.Contracts.Requests;
+using Api.Contracts.Requests.Auth;
 using Application.Abstract;
 using Application.Dto;
+using Application.Dto.Auth;
 using AutoMapper;
 using Core.Structures;
 

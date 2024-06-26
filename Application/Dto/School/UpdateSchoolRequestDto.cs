@@ -1,4 +1,4 @@
-namespace Application.Dto;
+namespace Application.Dto.School;
 
 public class UpdateSchoolRequestDto
 {

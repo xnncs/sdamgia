@@ -1,9 +1,11 @@
 using System.Net;
 using Api.Contracts;
 using Api.Contracts.Requests;
+using Api.Contracts.Requests.School;
 using Api.Contracts.Responses;
 using Application.Abstract;
 using Application.Dto;
+using Application.Dto.School;
 using AutoMapper;
 using Core.Models;
 using Core.Structures;

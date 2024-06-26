@@ -1,5 +1,6 @@
 using Api.Contracts;
 using Api.Contracts.Requests;
+using Api.Contracts.Requests.Auth;
 using FluentValidation;
 
 namespace Api.Validation.Validators;

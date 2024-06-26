@@ -1,5 +1,6 @@
 using Application.Abstract;
 using Application.Dto;
+using Application.Dto.Auth;
 using Core.Exceptions;
 using Core.Models;
 using Core.Structures;
