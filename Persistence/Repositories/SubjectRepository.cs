@@ -47,6 +47,12 @@ public class SubjectRepository : ISubjectRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task DeleteAsync(int id)
+    {
+        await _dbContext.Subjects.Where(x => x.Id == id)
+            .ExecuteDeleteAsync();
+    }
+
     public async Task<bool> ContainsByNameAsync(string name)
     {
         return await _dbContext.Subjects.AnyAsync(x => x.Name == name);

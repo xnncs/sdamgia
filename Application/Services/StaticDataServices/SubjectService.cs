@@ -45,4 +45,14 @@ public class SubjectService : ISubjectService
         SubjectUpdatingModel model = _mapper.Map<UpdateSubjectDto, SubjectUpdatingModel>(request);
         await _subjectRepository.UpdateAsync(request.ObjectToUpdateId, model);
     }
+
+    public async Task DeleteAsync(int id)
+    {
+        if (!await _subjectRepository.ContainsByIdAsync(id))
+        {
+            throw new Exception("No such a subject with this id");
+        }
+
+        await _subjectRepository.DeleteAsync(id);
+    }
 }

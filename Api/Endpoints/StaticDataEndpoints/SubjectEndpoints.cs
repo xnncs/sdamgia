@@ -18,8 +18,15 @@ public static class SubjectEndpoints
         endpoints.MapPost("create", CreateAsync);
 
         endpoints.MapPut("update", UpdateAsync);
+
+        endpoints.MapDelete("delete", DeleteAsync);
         
         return endpoints;
+    }
+
+    private static async Task DeleteAsync(int id, ISubjectService subjectService)
+    {
+        await subjectService.DeleteAsync(id);
     }
 
     private static async Task UpdateAsync(UpdateSubjectRequest request, ISubjectService subjectService, IMapper mapper)
