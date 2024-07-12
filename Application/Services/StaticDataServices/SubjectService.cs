@@ -1,19 +1,22 @@
 using Application.Abstract.StaticDataServices;
 using Application.Dto.Subject;
+using AutoMapper;
 using Core.StaticInfoModels;
 using Persistence.Abstract;
+using Persistence.Models;
 
 namespace Application.Services.StaticDataServices;
 
 public class SubjectService : ISubjectService
 {
-    public SubjectService(ISubjectRepository subjectRepository)
+    public SubjectService(ISubjectRepository subjectRepository, IMapper mapper)
     {
         _subjectRepository = subjectRepository;
+        _mapper = mapper;
     }
 
     private readonly ISubjectRepository _subjectRepository;
-
+    private readonly IMapper _mapper;
     
     public async Task<IReadOnlyCollection<Subject>> GetAllAsync()
     {
@@ -30,5 +33,16 @@ public class SubjectService : ISubjectService
         Subject objectToAdd = Subject.Create(request.Name, request.Prototypes);
 
         await _subjectRepository.AddAsync(objectToAdd);
+    }
+
+    public async Task UpdateAsync(UpdateSubjectDto request)
+    {
+        if (!await _subjectRepository.ContainsByIdAsync(request.ObjectToUpdateId))
+        {
+            throw new Exception("No such a subject with this id");
+        }
+
+        SubjectUpdatingModel model = _mapper.Map<UpdateSubjectDto, SubjectUpdatingModel>(request);
+        await _subjectRepository.UpdateAsync(request.ObjectToUpdateId, model);
     }
 }

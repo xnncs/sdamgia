@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Api.Contracts.Requests.Subject;
 using Application.Abstract.StaticDataServices;
 using Application.Dto.Subject;
@@ -15,8 +16,17 @@ public static class SubjectEndpoints
         endpoints.MapGet("get", GetAllAsync);
 
         endpoints.MapPost("create", CreateAsync);
+
+        endpoints.MapPut("update", UpdateAsync);
         
         return endpoints;
+    }
+
+    private static async Task UpdateAsync(UpdateSubjectRequest request, ISubjectService subjectService, IMapper mapper)
+    {
+        UpdateSubjectDto contract = mapper.Map<UpdateSubjectRequest, UpdateSubjectDto>(request);
+
+        await subjectService.UpdateAsync(contract);
     }
 
     private static async Task CreateAsync(CreateSubjectRequest request, ISubjectService subjectService, IMapper mapper)

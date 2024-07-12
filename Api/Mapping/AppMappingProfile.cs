@@ -26,7 +26,7 @@ public class AppMappingProfile : Profile
     {
         CreateEntityToModelMaps();
 
-        CreateRequestToRequestDtoMaps();
+        CreateRequestToDtoMaps();
         
         CreateResponsesMaps();
 
@@ -52,7 +52,7 @@ public class AppMappingProfile : Profile
         CreateMap<SubjectEntity, Subject>().ReverseMap();
     }
 
-    private void CreateRequestToRequestDtoMaps()
+    private void CreateRequestToDtoMaps()
     {
         // requests to requestsDto
         CreateMap<LoginUserRequest, LoginUserDto>();
@@ -68,6 +68,8 @@ public class AppMappingProfile : Profile
         CreateMap<CreateExamTaskRequest, CreateExamTaskDto>();
 
         CreateMap<CreateSubjectRequest, CreateSubjectDto>();
+
+        CreateMap<UpdateSubjectRequest, UpdateSubjectDto>();
     }
 
     private void CreateResponsesMaps()
@@ -81,5 +83,7 @@ public class AppMappingProfile : Profile
     private void CreateAllAnotherMaps()
     {
         CreateMap<UpdateSchoolDto, SchoolUpdatingModel>();
+
+        CreateMap<UpdateSubjectDto, SubjectUpdatingModel>();
     }
 }
