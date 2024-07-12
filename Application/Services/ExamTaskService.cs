@@ -32,7 +32,7 @@ public class ExamTaskService : IExamTaskService
         Teacher author = (await _teacherRepository.GetByUserIdAsync(request.UserId))!;
         ExamTask examTask = GenerateExamTaskAndModifyTeacherObjects(request, author);
 
-        await _examTaskRepository.CreateAsync(examTask);
+        await _examTaskRepository.AddAsync(examTask);
     }
 
     private ExamTask GenerateExamTaskAndModifyTeacherObjects(CreateExamTaskRequestDto request, Teacher author)

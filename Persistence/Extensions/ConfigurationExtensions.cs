@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Abstract;
 using Persistence.Repositories;
@@ -6,7 +8,7 @@ namespace Persistence.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static IServiceCollection ConfigurePersistenceServices(this IServiceCollection services)
+    public static IServiceCollection AddPersistenceServices(this IServiceCollection services)
     {
         // adding repositories
         services.AddScoped<IUserRepository, UserRepository>();
@@ -19,6 +21,20 @@ public static class ConfigurationExtensions
         services.AddScoped<IPostRepository, PostRepository>();
 
         services.AddScoped<IExamTaskRepository, ExamTaskRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfigurationManager configuration)
+    {
+        // adding db contexts
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            string? connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext))
+                                       ?? throw new Exception("Connection string does not exist");
+
+            options.UseNpgsql(connectionString);
+        });
 
         return services;
     }

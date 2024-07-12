@@ -16,7 +16,7 @@ public class ExamTaskRepository : IExamTaskRepository
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
     
-    public async Task CreateAsync(ExamTask examTask)
+    public async Task AddAsync(ExamTask examTask)
     {
         ExamTaskEntity examTaskEntity = _mapper.Map<ExamTask, ExamTaskEntity>(examTask);
 

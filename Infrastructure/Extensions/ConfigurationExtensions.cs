@@ -7,7 +7,7 @@ namespace Infrastructure.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         // adding helpers 
         services.AddSingleton<IPasswordHasher, PasswordHasher>();

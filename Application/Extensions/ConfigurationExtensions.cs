@@ -7,7 +7,7 @@ namespace Application.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static IServiceCollection ConfigureBusinessLogicServices(this IServiceCollection services)
+    public static IServiceCollection AddBusinessLogicServices(this IServiceCollection services)
     {
         // adding business logic services 
         services.AddScoped<IAuthorizationService, AuthorizationService>();

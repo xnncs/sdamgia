@@ -18,30 +18,18 @@ public static class ConfigurationExtensions
 {
     public static IServiceCollection ConfigureDependencyInjection(this IServiceCollection services, ConfigurationManager configuration)
     {
-        // configuring options 
-        services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-        services.Configure<PasswordHashOptions>(configuration.GetSection(nameof(PasswordHashOptions)));
-
+        services.ConfigureOptions(configuration);
 
         // adding mapping
         services.AddAutoMapper(typeof(AppMappingProfile));
 
-        services.ConfigureBusinessLogicServices();
+        services.AddBusinessLogicServices();
 
-        services.ConfigureInfrastructureServices();
+        services.AddInfrastructureServices();
 
-        services.ConfigurePersistenceServices();
-
-
-        // adding db contexts
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            string? connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext))
-                                       ?? throw new Exception("Connection string does not exist");
-
-            options.UseNpgsql(connectionString);
-        });
-
+        services.AddDbContexts(configuration);
+        services.AddPersistenceServices();
+        
 
         // adding validation
         services.AddMediatR(config =>
@@ -66,7 +54,7 @@ public static class ConfigurationExtensions
         // adding middlewares
         app.UseCustomExceptionHandler();
 
-// adding swagger if app is in development mode
+        // adding swagger if app is in development mode
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -89,5 +77,15 @@ public static class ConfigurationExtensions
         app.UseAuthorization();
 
         return app;
+    }
+
+    private static IServiceCollection ConfigureOptions(this IServiceCollection services,
+        ConfigurationManager configuration)
+    {
+        // configuring options 
+        services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+        services.Configure<PasswordHashOptions>(configuration.GetSection(nameof(PasswordHashOptions)));
+
+        return services;
     }
 }
