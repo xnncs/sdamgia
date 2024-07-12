@@ -4,5 +4,5 @@ namespace Application.Abstract;
 
 public interface IExamTaskService
 {
-    Task CreateExamTaskAsync(CreateExamTaskRequestDto request);
+    Task CreateExamTaskAsync(CreateExamTaskDto request);
 }

@@ -1,10 +1,10 @@
 namespace Application.Dto.School;
 
-public class DeleteSchoolRequestDto
+public class DeleteSchoolDto
 {
-    public static DeleteSchoolRequestDto Create(int userId)
+    public static DeleteSchoolDto Create(int userId)
     {
-        return new DeleteSchoolRequestDto()
+        return new DeleteSchoolDto()
         {
             UserId = userId
         };

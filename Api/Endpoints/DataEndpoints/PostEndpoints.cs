@@ -1,26 +1,24 @@
-using Api.Contracts.Requests;
 using Api.Contracts.Requests.Post;
 using Application.Abstract;
-using Application.Dto;
 using Application.Dto.Post;
 using AutoMapper;
 
-namespace Api.Endpoints;
+namespace Api.Endpoints.DataEndpoints;
 
 public static class PostEndpoints
 {
     public static IEndpointRouteBuilder MapPostEndpoints(this IEndpointRouteBuilder app)
     {
-        IEndpointRouteBuilder endpoints = app.MapGroup("api/school/posts");
+        IEndpointRouteBuilder endpoints = app.MapGroup("api/schools/posts");
         
         
-        // POST: api/school/posts/create
+        // POST: api/schools/posts/create
         endpoints.MapPost("create", CreatePostAsync);
 
-        // PUT: api/school/posts/update
+        // PUT: api/schools/posts/update
         endpoints.MapPut("update", UpdatePostAsync);
 
-        // DELETE: api/school/posts/delete/{postId}
+        // DELETE: api/schools/posts/delete/{postId}
         endpoints.MapDelete("delete/{postId}", DeletePostAsync);
         
         
@@ -31,7 +29,7 @@ public static class PostEndpoints
         HttpContext context, ISchoolService schoolService, IMapper mapper)
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
-        CreatePostRequestDto contract = GenerateCreatePostRequestDtoObject(request, userId, mapper);
+        CreatePostDto contract = GenerateCreatePostRequestDtoObject(request, userId, mapper);
 
         await schoolService.CreatePost(contract);
 
@@ -42,7 +40,7 @@ public static class PostEndpoints
         HttpContext context, ISchoolService schoolService, IMapper mapper)
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
-        EditPostRequestDto contract = GenerateEditPostRequestDtoObject(request, userId, mapper);
+        EditPostDto contract = GenerateEditPostRequestDtoObject(request, userId, mapper);
 
         await schoolService.UpdatePost(contract);
 
@@ -54,7 +52,7 @@ public static class PostEndpoints
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
         
-        DeletePostRequestDto contract = DeletePostRequestDto.Create(
+        DeletePostDto contract = DeletePostDto.Create(
             postId: postId,
             userId: userId);
 
@@ -63,19 +61,19 @@ public static class PostEndpoints
         return TypedResults.Ok();
     }
     
-    private static CreatePostRequestDto GenerateCreatePostRequestDtoObject(CreatePostRequest request, int userId,
+    private static CreatePostDto GenerateCreatePostRequestDtoObject(CreatePostRequest request, int userId,
         IMapper mapper)
     {
-        CreatePostRequestDto contract = mapper.Map<CreatePostRequest, CreatePostRequestDto>(request);
+        CreatePostDto contract = mapper.Map<CreatePostRequest, CreatePostDto>(request);
         contract.UserId = userId;
 
         return contract;
     }
     
-    private static EditPostRequestDto GenerateEditPostRequestDtoObject(EditPostRequest request, int userId,
+    private static EditPostDto GenerateEditPostRequestDtoObject(EditPostRequest request, int userId,
         IMapper mapper)
     {
-        EditPostRequestDto contract = mapper.Map<EditPostRequest, EditPostRequestDto>(request);
+        EditPostDto contract = mapper.Map<EditPostRequest, EditPostDto>(request);
         contract.UserId = userId;
 
         return contract;

@@ -2,7 +2,7 @@ using Core.Structures;
 
 namespace Application.Dto.School;
 
-public class CreateSchoolRequestDto
+public class CreateSchoolDto
 {
     public string CourseName { get; set; }
     public string Description { get; set; }

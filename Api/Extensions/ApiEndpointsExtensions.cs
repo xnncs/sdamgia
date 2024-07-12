@@ -1,4 +1,6 @@
 using Api.Endpoints;
+using Api.Endpoints.DataEndpoints;
+using Api.Endpoints.StaticDataEndpoints;
 
 namespace Api.Extensions;
 
@@ -10,5 +12,7 @@ public static class ApiEndpointsExtensions
         app.MapSchoolEndpoints();
         app.MapPostEndpoints();
         app.MapExamTaskEndpoints();
+
+        app.MapSubjectsEndpoints();
     }
 }

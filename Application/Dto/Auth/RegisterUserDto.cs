@@ -2,7 +2,7 @@ using Core.Structures;
 
 namespace Application.Dto.Auth;
 
-public record RegisterUserRequestDto
+public record RegisterUserDto
 {
     public string Email { get; set; }
     public string Password { get; set; }

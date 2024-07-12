@@ -3,6 +3,7 @@ using Api.Contracts.Requests.Auth;
 using Api.Contracts.Requests.ExamTask;
 using Api.Contracts.Requests.Post;
 using Api.Contracts.Requests.School;
+using Api.Contracts.Requests.Subject;
 using Api.Contracts.Responses;
 using Api.Contracts.Responses.ResponseHelpingModels;
 using Application.Dto;
@@ -10,8 +11,10 @@ using Application.Dto.Auth;
 using Application.Dto.ExamTask;
 using Application.Dto.Post;
 using Application.Dto.School;
+using Application.Dto.Subject;
 using AutoMapper;
 using Core.Models;
+using Core.StaticInfoModels;
 using Persistence.Entities;
 using Persistence.Models;
 
@@ -45,22 +48,26 @@ public class AppMappingProfile : Profile
         
         CreateMap<ExamTaskEntity, ExamTask>().ReverseMap();
         CreateMap<ExamOptionEntity, ExamOption>().ReverseMap();
+
+        CreateMap<SubjectEntity, Subject>().ReverseMap();
     }
 
     private void CreateRequestToRequestDtoMaps()
     {
         // requests to requestsDto
-        CreateMap<LoginUserRequest, LoginUserRequestDto>();
-        CreateMap<RegisterUserRequest, RegisterUserRequestDto>();
+        CreateMap<LoginUserRequest, LoginUserDto>();
+        CreateMap<RegisterUserRequest, RegisterUserDto>();
 
-        CreateMap<CreateSchoolRequest, CreateSchoolRequestDto>();
+        CreateMap<CreateSchoolRequest, CreateSchoolDto>();
 
-        CreateMap<UpdateSchoolRequest, UpdateSchoolRequestDto>();
+        CreateMap<UpdateSchoolRequest, UpdateSchoolDto>();
 
-        CreateMap<CreatePostRequest, CreatePostRequestDto>();
-        CreateMap<EditPostRequest, EditPostRequestDto>();
+        CreateMap<CreatePostRequest, CreatePostDto>();
+        CreateMap<EditPostRequest, EditPostDto>();
         
-        CreateMap<CreateExamTaskRequest, CreateExamTaskRequestDto>();
+        CreateMap<CreateExamTaskRequest, CreateExamTaskDto>();
+
+        CreateMap<CreateSubjectRequest, CreateSubjectDto>();
     }
 
     private void CreateResponsesMaps()
@@ -73,6 +80,6 @@ public class AppMappingProfile : Profile
 
     private void CreateAllAnotherMaps()
     {
-        CreateMap<UpdateSchoolRequestDto, SchoolUpdatingModel>();
+        CreateMap<UpdateSchoolDto, SchoolUpdatingModel>();
     }
 }

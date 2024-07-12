@@ -32,7 +32,7 @@ public class AuthorizationService : IAuthorizationService
     private readonly IStudentRepository _studentRepository;
     private readonly ITeacherRepository _teacherRepository;
     
-    public async Task RegisterAsync(RegisterUserRequestDto request)
+    public async Task RegisterAsync(RegisterUserDto request)
     {
         if (await _userRepository.ContainsByLoginAsync(request.Email))
         {
@@ -63,7 +63,7 @@ public class AuthorizationService : IAuthorizationService
         }
     }
 
-    public async Task<string> LoginAsync(LoginUserRequestDto request)
+    public async Task<string> LoginAsync(LoginUserDto request)
     {
         User user = await _userRepository.GetByLoginAsync(request.Email) ?? throw new NoSuchAccountException();
 

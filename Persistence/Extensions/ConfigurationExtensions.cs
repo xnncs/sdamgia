@@ -22,6 +22,8 @@ public static class ConfigurationExtensions
 
         services.AddScoped<IExamTaskRepository, ExamTaskRepository>();
 
+        services.AddScoped<ISubjectRepository, SubjectRepository>();
+
         return services;
     }
 
@@ -30,7 +32,7 @@ public static class ConfigurationExtensions
         // adding db contexts
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            string? connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext))
+            string connectionString = configuration.GetConnectionString(nameof(ApplicationDbContext))
                                        ?? throw new Exception("Connection string does not exist");
 
             options.UseNpgsql(connectionString);

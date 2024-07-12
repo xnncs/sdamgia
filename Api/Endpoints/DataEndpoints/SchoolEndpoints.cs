@@ -1,42 +1,37 @@
-using System.Net;
-using Api.Contracts;
-using Api.Contracts.Requests;
 using Api.Contracts.Requests.School;
 using Api.Contracts.Responses;
 using Application.Abstract;
-using Application.Dto;
 using Application.Dto.School;
 using AutoMapper;
 using Core.Models;
-using Core.Structures;
 using Infrastructure.Abstract;
 
-namespace Api.Endpoints;
+namespace Api.Endpoints.DataEndpoints;
 
 public static class SchoolEndpoints
 {
     public static IEndpointRouteBuilder MapSchoolEndpoints(this IEndpointRouteBuilder app)
     {
-        IEndpointRouteBuilder endpoints = app.MapGroup("api/school");
+        IEndpointRouteBuilder endpoints = app.MapGroup("api/schools");
         
        
-        // GET: api/school/get
+        // GET: api/schools/get
         endpoints.MapGet("get", GetAsync);
         
-        // POST: api/school/create
+        // POST: api/schools/create
         endpoints.MapPost("create", CreateSchoolAsync);
         
-        // PUT: api/school/update
+        // PUT: api/schools/update
         endpoints.MapPut("update", UpdateSchoolAsync);
 
-        // DELETE: api/school/delete
+        // DELETE: api/schools/delete
         endpoints.MapDelete("delete", DeleteSchoolAsync);
         
 
-        // POST: api/school/join/{schoolId}
+        // POST: api/schools/join/{schoolId}
         endpoints.MapPost("join/{schoolId}", JoinSchoolAsync);
         
-        // POST: api/school/leave
+        // POST: api/schools/leave
         endpoints.MapPost("leave", LeaveSchoolAsync);
         
         
@@ -58,7 +53,7 @@ public static class SchoolEndpoints
         ISchoolService schoolService, IMapper mapper)
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
-        UpdateSchoolRequestDto contract = GenerateUpdateSchoolRequestDtoObject(request, userId, mapper);
+        UpdateSchoolDto contract = GenerateUpdateSchoolRequestDtoObject(request, userId, mapper);
 
         await schoolService.UpdateSchool(contract);
 
@@ -70,7 +65,7 @@ public static class SchoolEndpoints
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
         
-        DeleteSchoolRequestDto contract = DeleteSchoolRequestDto.Create(
+        DeleteSchoolDto contract = DeleteSchoolDto.Create(
             userId: userId);
 
         await schoolService.DeleteSchool(contract);
@@ -94,7 +89,7 @@ public static class SchoolEndpoints
         ISchoolService schoolService)
     {
         int authorId = authorizationService.GetUserIdFromJwt(context);
-        JoinSchoolRequestDto contract = new JoinSchoolRequestDto(SchoolId: schoolId, UserId: authorId);
+        JoinSchoolDto contract = new JoinSchoolDto(SchoolId: schoolId, UserId: authorId);
 
         await schoolService.JoinSchoolAsync(contract);
 
@@ -104,25 +99,25 @@ public static class SchoolEndpoints
         HttpContext context, IJwtProvider provider, ISchoolService schoolService)
     {
         int authorId = authorizationService.GetUserIdFromJwt(context);
-        CreateSchoolRequestDto contract = GenerateCreateSchoolRequestDtoObject(request, authorId, mapper);
+        CreateSchoolDto contract = GenerateCreateSchoolRequestDtoObject(request, authorId, mapper);
 
         await schoolService.CreateSchoolAsync(contract);
 
         return TypedResults.Ok();
     }
     
-    private static CreateSchoolRequestDto GenerateCreateSchoolRequestDtoObject(CreateSchoolRequest request, int authorId, IMapper mapper)
+    private static CreateSchoolDto GenerateCreateSchoolRequestDtoObject(CreateSchoolRequest request, int authorId, IMapper mapper)
     {
-        CreateSchoolRequestDto contract = mapper.Map<CreateSchoolRequest, CreateSchoolRequestDto>(request);
+        CreateSchoolDto contract = mapper.Map<CreateSchoolRequest, CreateSchoolDto>(request);
         contract.AuthorId = authorId;
 
         return contract;
     }
     
-    private static UpdateSchoolRequestDto GenerateUpdateSchoolRequestDtoObject(UpdateSchoolRequest request, int userId,
+    private static UpdateSchoolDto GenerateUpdateSchoolRequestDtoObject(UpdateSchoolRequest request, int userId,
         IMapper mapper)
     {
-        UpdateSchoolRequestDto contract = mapper.Map<UpdateSchoolRequest, UpdateSchoolRequestDto>(request);
+        UpdateSchoolDto contract = mapper.Map<UpdateSchoolRequest, UpdateSchoolDto>(request);
         contract.UserId = userId;
 
         return contract;

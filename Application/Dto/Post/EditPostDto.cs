@@ -1,6 +1,6 @@
 namespace Application.Dto.Post;
 
-public class EditPostRequestDto
+public class EditPostDto
 {
     public string Data { get; set; }
     public int PostId { get; set; }

@@ -41,7 +41,7 @@ public class SchoolService : ISchoolService
     
     private readonly IMapper _mapper;
 
-    public async Task CreateSchoolAsync(CreateSchoolRequestDto request)
+    public async Task CreateSchoolAsync(CreateSchoolDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.AuthorId);
 
@@ -57,7 +57,7 @@ public class SchoolService : ISchoolService
         await _schoolRepository.AddSchoolAsync(school);
     }
 
-    public async Task JoinSchoolAsync(JoinSchoolRequestDto request)
+    public async Task JoinSchoolAsync(JoinSchoolDto request)
     {
         await _permissionsHelper.CheckStudentPermissionsAsync(request.UserId);
         
@@ -99,19 +99,19 @@ public class SchoolService : ISchoolService
         await _schoolRepository.LeaveSchoolAsync(studentIdValue);
     }
 
-    public async Task UpdateSchool(UpdateSchoolRequestDto request)
+    public async Task UpdateSchool(UpdateSchoolDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
         
         await _permissionsHelper.CheckSchoolExistenceByUserIdAsync(request.UserId);
 
         int schoolId = await GetSchoolIdByUserIdForTeacherAsync(request.UserId);
-        SchoolUpdatingModel model = _mapper.Map<UpdateSchoolRequestDto, SchoolUpdatingModel>(request);
+        SchoolUpdatingModel model = _mapper.Map<UpdateSchoolDto, SchoolUpdatingModel>(request);
         
         await _schoolRepository.UpdateAsync(model, schoolId);
     }
     
-    public async Task DeleteSchool(DeleteSchoolRequestDto request)
+    public async Task DeleteSchool(DeleteSchoolDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
@@ -122,7 +122,7 @@ public class SchoolService : ISchoolService
         await _schoolRepository.DeleteByIdAsync(schoolId);
     }
 
-    public async Task CreatePost(CreatePostRequestDto request)
+    public async Task CreatePost(CreatePostDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
         
@@ -133,14 +133,14 @@ public class SchoolService : ISchoolService
         await _postRepository.AddAsync(schoolId, post);
     }
 
-    public async Task UpdatePost(EditPostRequestDto request)
+    public async Task UpdatePost(EditPostDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
         await _postRepository.UpdateAsync(request.Data, request.PostId);
     }
 
-    public async Task DeletePost(DeletePostRequestDto request)
+    public async Task DeletePost(DeletePostDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
@@ -186,7 +186,7 @@ public class SchoolService : ISchoolService
         throw new Exception("This user does not have a school");
     }
     
-    private School GenerateSchoolObjectOnCreatingSchool(CreateSchoolRequestDto request, Teacher teacher)
+    private School GenerateSchoolObjectOnCreatingSchool(CreateSchoolDto request, Teacher teacher)
     {
         return School.CreateSchool(
             request.CourseName,

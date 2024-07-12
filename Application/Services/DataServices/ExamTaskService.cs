@@ -25,7 +25,7 @@ public class ExamTaskService : IExamTaskService
     
     private readonly ISchoolPermissionsHelper _permissionsHelper;
     
-    public async Task CreateExamTaskAsync(CreateExamTaskRequestDto request)
+    public async Task CreateExamTaskAsync(CreateExamTaskDto request)
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
@@ -35,7 +35,7 @@ public class ExamTaskService : IExamTaskService
         await _examTaskRepository.AddAsync(examTask);
     }
 
-    private ExamTask GenerateExamTaskAndModifyTeacherObjects(CreateExamTaskRequestDto request, Teacher author)
+    private ExamTask GenerateExamTaskAndModifyTeacherObjects(CreateExamTaskDto request, Teacher author)
     {
         ExamTask examTask = ExamTask.Create(request.Data, request.Subject, request.Prototype, author);
 

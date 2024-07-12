@@ -24,6 +24,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
     
     
+    public DbSet<SubjectEntity> Subjects { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +40,8 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new TeacherEntityConfiguration());
         modelBuilder.ApplyConfiguration(new StudentEntityConfiguration());
+
+        modelBuilder.ApplyConfiguration(new SubjectEntityConfiguration());
         
         base.OnModelCreating(modelBuilder);
     }

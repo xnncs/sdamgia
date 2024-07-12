@@ -26,16 +26,16 @@ public static class AuthEndpoints
     
     private static async Task<IResult> RegisterAsync(RegisterUserRequest request, IAuthorizationService authorizationService, IMapper mapper)
     {
-        RegisterUserRequestDto contract = CreateRegisterRequestContract(request, mapper);
+        RegisterUserDto contract = CreateRegisterRequestContract(request, mapper);
 
         await authorizationService.RegisterAsync(contract);
         
         return TypedResults.Ok();
     }
 
-    private static RegisterUserRequestDto CreateRegisterRequestContract(RegisterUserRequest request, IMapper mapper)
+    private static RegisterUserDto CreateRegisterRequestContract(RegisterUserRequest request, IMapper mapper)
     {
-        RegisterUserRequestDto contract = mapper.Map<RegisterUserRequest, RegisterUserRequestDto>(request);
+        RegisterUserDto contract = mapper.Map<RegisterUserRequest, RegisterUserDto>(request);
         contract.Role = (Roles)request.RoleStudentOrTeacher;
         
         return contract;
@@ -43,7 +43,7 @@ public static class AuthEndpoints
     
     private static async Task<IResult> LoginAsync(LoginUserRequest request, IAuthorizationService authorizationService, HttpContext context, IMapper mapper)
     {
-        LoginUserRequestDto contract = mapper.Map<LoginUserRequest, LoginUserRequestDto>(request);
+        LoginUserDto contract = mapper.Map<LoginUserRequest, LoginUserDto>(request);
         
         string token = await authorizationService.LoginAsync(contract);
         context.Response.Cookies.Append("tasty-cookies", token);

@@ -7,10 +7,10 @@ namespace Application.Abstract;
 
 public interface IAuthorizationService
 {
-    Task RegisterAsync(RegisterUserRequestDto request);
+    Task RegisterAsync(RegisterUserDto request);
     
     // returns jwt token
-    Task<string> LoginAsync(LoginUserRequestDto request);
+    Task<string> LoginAsync(LoginUserDto request);
     
     int GetUserIdFromJwt(HttpContext httpContext);
 }

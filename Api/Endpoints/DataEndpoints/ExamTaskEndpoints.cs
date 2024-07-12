@@ -1,10 +1,9 @@
-using System.Security.Cryptography;
 using Api.Contracts.Requests.ExamTask;
 using Application.Abstract;
 using Application.Dto.ExamTask;
 using AutoMapper;
 
-namespace Api.Endpoints;
+namespace Api.Endpoints.DataEndpoints;
 
 public static class ExamTaskEndpoints
 {
@@ -24,15 +23,15 @@ public static class ExamTaskEndpoints
     {
         int userId = authorizationService.GetUserIdFromJwt(httpContext);
 
-        CreateExamTaskRequestDto contract = GenerateCreateExamTaskRequestDtoObject(request, userId, mapper);
+        CreateExamTaskDto contract = GenerateCreateExamTaskRequestDtoObject(request, userId, mapper);
 
         await examTaskService.CreateExamTaskAsync(contract);
     }
 
-    private static CreateExamTaskRequestDto GenerateCreateExamTaskRequestDtoObject(CreateExamTaskRequest request, int userId,
+    private static CreateExamTaskDto GenerateCreateExamTaskRequestDtoObject(CreateExamTaskRequest request, int userId,
         IMapper mapper)
     {
-        CreateExamTaskRequestDto contract = mapper.Map<CreateExamTaskRequest, CreateExamTaskRequestDto>(request);
+        CreateExamTaskDto contract = mapper.Map<CreateExamTaskRequest, CreateExamTaskDto>(request);
         contract.UserId = userId;
 
         return contract;

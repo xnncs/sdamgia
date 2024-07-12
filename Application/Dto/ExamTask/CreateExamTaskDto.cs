@@ -2,7 +2,7 @@ using Core.Structures;
 
 namespace Application.Dto.ExamTask;
 
-public record CreateExamTaskRequestDto
+public record CreateExamTaskDto
 {
     public Subjects Subject { get; set; }
     public double Prototype { get; set; }

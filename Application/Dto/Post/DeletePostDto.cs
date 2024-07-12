@@ -1,10 +1,10 @@
 namespace Application.Dto.Post;
 
-public class DeletePostRequestDto
+public class DeletePostDto
 {
-    public static DeletePostRequestDto Create(int postId, int userId)
+    public static DeletePostDto Create(int postId, int userId)
     {
-        return new DeletePostRequestDto()
+        return new DeletePostDto()
         {
             PostId = postId,
             UserId = userId
