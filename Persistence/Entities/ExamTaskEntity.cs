@@ -5,8 +5,8 @@ namespace Persistence.Entities;
 public record ExamTaskEntity
 {
     public int Id { get; set; }
-    public Subjects Subject { get; set; }
-    public double Prototype { get; set; }
+    public SubjectEntity Subject { get; set; }
+    public string Prototype { get; set; }
     // html
     public string Data { get; set; }
     

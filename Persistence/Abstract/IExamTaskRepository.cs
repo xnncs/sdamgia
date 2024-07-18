@@ -4,5 +4,5 @@ namespace Persistence.Abstract;
 
 public interface IExamTaskRepository
 {
-    public Task AddAsync(ExamTask examTask);
+    Task AddAsync(ExamTask examTask);
 }

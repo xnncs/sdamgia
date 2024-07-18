@@ -6,7 +6,7 @@ namespace Persistence.Entities;
 public record ExamOptionEntity
 {
     public int Id { get; set; }
-    public Subjects Subject { get; set; }
+    public SubjectEntity Subject { get; set; }
 
     public IEnumerable<ExamTaskEntity> ExamTasks { get; set; } = Enumerable.Empty<ExamTaskEntity>();
     

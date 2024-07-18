@@ -1,32 +1,33 @@
 using Application.Abstract;
-using Application.Dto;
 using Application.Dto.Post;
 using Application.Dto.School;
 using AutoMapper;
 using Core.Models;
+using Core.StaticInfoModels;
 using Persistence.Abstract;
 using Persistence.Models;
 
-namespace Application.Services;
+namespace Application.Services.DataServices;
 
 public class SchoolService : ISchoolService
 {
     public SchoolService(ITeacherRepository teacherRepository, IStudentRepository studentRepository, 
         ISchoolRepository schoolRepository, IUserRepository userRepository, IPostRepository postRepository,
-        ISchoolPermissionsHelper schoolPermissionsHelper, IMapper mapper)
+        ISchoolPermissionsHelper schoolPermissionsHelper, IMapper mapper, ISubjectRepository subjectRepository)
     {
         _userRepository = userRepository;
-        
         _teacherRepository = teacherRepository;
+        
         _studentRepository = studentRepository;
+        _subjectRepository = subjectRepository;
         
         _schoolRepository = schoolRepository;
-
         _postRepository = postRepository;
-
+        
         _permissionsHelper = schoolPermissionsHelper;
         
         _mapper = mapper;
+
     }
 
     private readonly IPostRepository _postRepository;
@@ -38,6 +39,8 @@ public class SchoolService : ISchoolService
     private readonly IStudentRepository _studentRepository;
 
     private readonly ISchoolPermissionsHelper _permissionsHelper;
+
+    private readonly ISubjectRepository _subjectRepository;
     
     private readonly IMapper _mapper;
 
@@ -51,8 +54,12 @@ public class SchoolService : ISchoolService
         {
             throw new Exception("This teacher already has school");
         }
-        
-        School school = GenerateSchoolObjectOnCreatingSchool(request, teacher);
+
+        Subject subject = await _subjectRepository.GetByIdAsync(request.SubjectId)
+                          ?? throw new Exception("No such a subject with this name");
+
+
+        School school = School.CreateSchool(request.CourseName, request.Description, teacher, subject);
 
         await _schoolRepository.AddSchoolAsync(school);
     }
@@ -137,7 +144,7 @@ public class SchoolService : ISchoolService
     {
         await _permissionsHelper.CheckTeacherPermissionsAsync(request.UserId);
 
-        await _postRepository.UpdateAsync(request.Data, request.PostId);
+        await _postRepository.UpdateAsync(request.Data, request.ObjectToUpdateId);
     }
 
     public async Task DeletePost(DeletePostDto request)
@@ -184,14 +191,5 @@ public class SchoolService : ISchoolService
         }
 
         throw new Exception("This user does not have a school");
-    }
-    
-    private School GenerateSchoolObjectOnCreatingSchool(CreateSchoolDto request, Teacher teacher)
-    {
-        return School.CreateSchool(
-            request.CourseName,
-            request.Description,
-            teacher,
-            request.Subject);
     }
 }

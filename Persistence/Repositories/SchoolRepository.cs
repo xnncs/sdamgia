@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 using Persistence.Models;
 
@@ -20,17 +21,19 @@ public class SchoolRepository : ISchoolRepository
     
     public async Task AddSchoolAsync(School school)
     {
-        SchoolEntity schoolEntity = _mapper.Map<School, SchoolEntity>(school);
+        SchoolEntity objectToAdd = _mapper.Map<School, SchoolEntity>(school);
 
-        _dbContext.Teachers.Attach(schoolEntity.Author);
+        _dbContext.Teachers.Attach(objectToAdd.Author);
+        _dbContext.Subjects.Attach(objectToAdd.Subject);
         
-        _dbContext.Schools.Add(schoolEntity);
+        _dbContext.Schools.Add(objectToAdd);
         await _dbContext.SaveChangesAsync();
     }
 
     public async Task<School?> GetSchoolByIdAsync(int id)
     {
         SchoolEntity? schoolEntity =  await _dbContext.Schools.AsNoTracking()
+            .Include(x => x.Subject)
             .Include(x => x.Author)
             .Include(x => x.Students)
             .Include(x => x.Page)
@@ -42,9 +45,12 @@ public class SchoolRepository : ISchoolRepository
 
     public async Task<School?> GetSchoolByTeacherIdAsync(int teacherId)
     {
-        TeacherEntity teacher = await _dbContext.Teachers.AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.Id == teacherId)
-                                ?? throw new Exception("No such teachers with that id");
+        TeacherEntity? teacher = await _dbContext.Teachers.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == teacherId);
+        if (teacher == null)
+        {
+            return null;
+        }
 
         int schoolId = teacher.SchoolId!.Value;
 
@@ -53,9 +59,12 @@ public class SchoolRepository : ISchoolRepository
 
     public async Task<School?> GetSchoolByStudentIdAsync(int studentId)
     {
-        StudentEntity student = await _dbContext.Students.AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.Id == studentId)
-                                ?? throw new Exception("No such students with that id");
+        StudentEntity? student = await _dbContext.Students.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == studentId);
+        if (student == null)
+        {
+            return null;
+        }
 
         int schoolId = student.SchoolId!.Value;
 
@@ -67,38 +76,49 @@ public class SchoolRepository : ISchoolRepository
         StudentEntity studentEntity = _mapper.Map<Student, StudentEntity>(student);
 
         _dbContext.Students.Attach(studentEntity);
-        
-        SchoolEntity schoolEntity = await _dbContext.Schools
+
+        SchoolEntity? schoolEntity = await _dbContext.Schools
             .Include(x => x.Students)
-            .FirstOrDefaultAsync(x => x.Id == schoolId) 
-                                     ?? throw new Exception("No such school exception");
+            .FirstOrDefaultAsync(x => x.Id == schoolId);
+        if (studentEntity == null)
+        {
+            return;
+        }
         
-        ModifySchoolAndStudentOnJoin(studentEntity, schoolEntity);
+        ModifySchoolAndStudentOnJoin(studentEntity, schoolEntity!);
 
         await _dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> ContainsStudentByIdAsync(int schoolId, int studentId)
     {
-        SchoolEntity schoolEntity = await _dbContext.Schools.AsNoTracking()
-                                        .Include(x => x.Students)
-                                        .FirstOrDefaultAsync(x => x.Id == schoolId) 
-                                    ?? throw new Exception();
+        SchoolEntity? schoolEntity = await _dbContext.Schools.AsNoTracking()
+            .Include(x => x.Students)
+            .FirstOrDefaultAsync(x => x.Id == schoolId);
+
+        if (schoolEntity == null)
+        {
+            return false;
+        }
+                                    
         
         return schoolEntity.Students.Any(x => x.Id == studentId);
     }
 
     public async Task LeaveSchoolAsync(int studentId)
     {
-        StudentEntity studentEntity = await _dbContext.Students
-                                           .Include(x => x.School)
-                                           .FirstOrDefaultAsync(x => x.Id == studentId)
-                                       ?? throw new Exception("No such students with that id");
-
+        StudentEntity? studentEntity = await _dbContext.Students
+            .Include(x => x.School)
+            .FirstOrDefaultAsync(x => x.Id == studentId);
+        if (studentEntity == null)
+        {
+            return;
+        }
+        
         bool hasSchool = studentEntity.School != null;
         if (!hasSchool)
         {
-            throw new Exception("That student does not have school");
+            return;
         }
         
         ModifySchoolAndStudentOnLeft(studentEntity, studentEntity.School!);
@@ -108,25 +128,28 @@ public class SchoolRepository : ISchoolRepository
 
     public async Task UpdateAsync(SchoolUpdatingModel data, int schoolId)
     {
-        SchoolEntity schoolEntity = await _dbContext.Schools
-                                        .FirstOrDefaultAsync(x => x.Id == schoolId)
-                                    ?? throw new Exception("No such schools with that id");
+        SchoolEntity? schoolEntity = await _dbContext.Schools
+            .FirstOrDefaultAsync(x => x.Id == schoolId);
+        if (schoolEntity == null)
+        {
+            return;
+        }
+                                    
 
         ModifySchoolOnUpdate(schoolEntity, data);
 
         await _dbContext.SaveChangesAsync();
     }
     
-    
-
     public async Task DeleteByIdAsync(int schoolId)
     {
         await _dbContext.Schools
             .Where(x => x.Id == schoolId)
             .ExecuteDeleteAsync();
     }
+    
 
-    private void ModifySchoolOnUpdate(SchoolEntity objectToUpdate, SchoolUpdatingModel data)
+    private static void ModifySchoolOnUpdate(SchoolEntity objectToUpdate, SchoolUpdatingModel data)
     {
         objectToUpdate.DatesOfUpdating.Add(DateTime.UtcNow);
 
@@ -134,23 +157,21 @@ public class SchoolRepository : ISchoolRepository
         objectToUpdate.Description = data.Description;
     }
 
-    private void ModifySchoolAndStudentOnLeft(StudentEntity studentEntity, SchoolEntity schoolEntity)
+    private static void ModifySchoolAndStudentOnLeft(StudentEntity studentEntity, SchoolEntity schoolEntity)
     {
         bool isDeleted = schoolEntity.Students.Remove(studentEntity);
         if (!isDeleted)
         {
-            throw new Exception("That school has no such student");
+            return;
         }
         
         studentEntity.School = null;
-        schoolEntity.StudentsNumber--;
     }
     
-    private void ModifySchoolAndStudentOnJoin(StudentEntity studentEntity, SchoolEntity schoolEntity)
+    private static void ModifySchoolAndStudentOnJoin(StudentEntity studentEntity, SchoolEntity schoolEntity)
     {
         studentEntity.School = schoolEntity;
         
         schoolEntity.Students.Add(studentEntity);
-        schoolEntity.StudentsNumber++;
     }
 }

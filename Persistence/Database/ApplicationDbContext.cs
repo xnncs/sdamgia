@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence.Configurations;
 using Persistence.Entities;
 
-namespace Persistence;
+namespace Persistence.Database;
 
 public class ApplicationDbContext : DbContext
 {

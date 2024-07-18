@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Repositories;
 
 namespace Persistence.Extensions;

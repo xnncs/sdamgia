@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
@@ -50,9 +51,9 @@ public class TeacherRepository : ITeacherRepository
 
     public async Task<int?> GetTeacherIdByUserIdAsync(int userId)
     {
-        TeacherEntity teacherEntity = await _dbContext.Teachers.AsNoTracking()
-                                          .FirstOrDefaultAsync(x => x.UserId == userId)
-                                      ?? throw new Exception("No such teachers with that userId");
-        return teacherEntity.Id;
+        TeacherEntity? teacherEntity = await _dbContext.Teachers.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UserId == userId);
+
+        return teacherEntity?.Id;
     }
 }

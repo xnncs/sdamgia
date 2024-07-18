@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.StaticInfoModels;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 using Persistence.Models;
 
@@ -14,7 +15,7 @@ public class SubjectRepository : ISubjectRepository
         _dbContext = dbContext;
         _mapper = mapper;
     }
-    
+
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
     
@@ -25,6 +26,23 @@ public class SubjectRepository : ISubjectRepository
         return subjects.Any() ?
             _mapper.Map<List<SubjectEntity>, List<Subject>>(subjects).AsReadOnly() : 
             Enumerable.Empty<Subject>().ToList().AsReadOnly();
+    }
+
+    public async Task<Subject?> GetByNameAsync(string name)
+    {
+        SubjectEntity? subject = await _dbContext.Subjects.AsNoTracking()
+            .FirstOrDefaultAsync(x => 
+                string.Equals(x.Name.ToLower(), name.ToLower(), StringComparison.Ordinal));
+
+        return _mapper.Map<SubjectEntity?, Subject?>(subject);
+    }
+
+    public async Task<Subject?> GetByIdAsync(int id)
+    {
+        SubjectEntity? subject = await _dbContext.Subjects.AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id);
+        
+        return _mapper.Map<SubjectEntity?, Subject?>(subject);
     }
 
     public async Task AddAsync(Subject subject)
@@ -63,6 +81,33 @@ public class SubjectRepository : ISubjectRepository
         return await _dbContext.Subjects.AnyAsync(x => x.Id == id);
     }
 
+    public async Task<bool> ContainsPrototypeAsync(string prototype, string subjectName)
+    {
+        SubjectEntity? subjectEntity = await _dbContext.Subjects.AsNoTracking()
+            .FirstOrDefaultAsync(x =>
+                string.Equals(x.Name.ToLower(), subjectName.ToLower(), StringComparison.Ordinal));
+        
+        if (subjectEntity == null)
+        {
+            return false;
+        }
+
+        return subjectEntity.Prototypes.Contains(prototype);
+    }
+
+    public async Task<bool> ContainsPrototypeAsync(string prototype, int subjectId)
+    {
+        SubjectEntity? subjectEntity = await _dbContext.Subjects.AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == subjectId);
+        
+        if (subjectEntity == null)
+        {
+            return false;
+        }
+
+        return subjectEntity.Prototypes.Contains(prototype);
+    }
+    
 
     private void ChangeSubjectOnUpdating(SubjectEntity subject, SubjectUpdatingModel updatingModel)
     {

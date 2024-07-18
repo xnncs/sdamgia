@@ -1,10 +1,11 @@
+using Core.StaticInfoModels;
 using Core.Structures;
 
 namespace Core.Models;
 
 public record ExamTask
 {
-    public static ExamTask Create(string data, Subjects subject, double prototype, Teacher author)
+    public static ExamTask Create(string data, Subject subject, string prototype, Teacher author)
     {
         return new ExamTask
         {
@@ -22,9 +23,9 @@ public record ExamTask
     public string Data { get; set; }
     
     
-    public Subjects Subject { get; set; }
+    public Subject Subject { get; set; }
 
-    public double Prototype { get; set; }
+    public string Prototype { get; set; }
     
     public Teacher Author { get; set; }
     public DateTime DateOfCreating { get; set; }

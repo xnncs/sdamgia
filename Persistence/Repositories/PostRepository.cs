@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
@@ -19,23 +20,31 @@ public class PostRepository : IPostRepository
     
     public async Task AddAsync(int schoolId, Post postData)
     {
-        PostEntity postEntity = _mapper.Map<Post, PostEntity>(postData);
+        PostEntity objectToAdd = _mapper.Map<Post, PostEntity>(postData);
 
-        SchoolEntity school = await _dbContext.Schools
-                            .Include(x => x.Page)
-                            .ThenInclude(x => x.Posts)
-                            .FirstOrDefaultAsync(x => x.Id == schoolId)
-                        ?? throw new Exception("No such schools with that id");
+        SchoolEntity? school = await _dbContext.Schools
+            .Include(x => x.Page)
+            .ThenInclude(x => x.Posts)
+            .FirstOrDefaultAsync(x => x.Id == schoolId);
+
+        if (school == null)
+        {
+            return;
+        }
         
-        school.Page.Posts.Add(postEntity);
+        school.Page.Posts.Add(objectToAdd);
 
         await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(string postData, int postId)
     {
-        PostEntity post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId)
-                          ?? throw new Exception("No such posts with that id");
+        PostEntity? post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+        if (post == null)
+        {
+            return;
+        }
+        
 
         ModifyPostOnUpdate(post, postData);
 

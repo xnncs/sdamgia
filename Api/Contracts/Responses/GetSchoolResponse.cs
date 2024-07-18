@@ -14,7 +14,7 @@ public record GetSchoolResponse
     
     public PageHelperResponseModel Page { get; set; }
     
-    public Subjects Subject { get; set; }
+    public string SubjectName { get; set; }
     
     public DateTime DateOfCreating { get; set; }
     public List<DateTime> DatesOfUpdating { get; set; } = Enumerable.Empty<DateTime>().ToList();

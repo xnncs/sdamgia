@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core.Models;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
@@ -18,11 +19,12 @@ public class ExamTaskRepository : IExamTaskRepository
     
     public async Task AddAsync(ExamTask examTask)
     {
-        ExamTaskEntity examTaskEntity = _mapper.Map<ExamTask, ExamTaskEntity>(examTask);
+        ExamTaskEntity objectToAdd = _mapper.Map<ExamTask, ExamTaskEntity>(examTask);
 
-        _dbContext.Attach(examTaskEntity.Author);
+        _dbContext.Teachers.Attach(objectToAdd.Author);
+        _dbContext.Subjects.Attach(objectToAdd.Subject);
         
-        _dbContext.ExamTasks.Add(examTaskEntity);
+        _dbContext.ExamTasks.Add(objectToAdd);
 
         await _dbContext.SaveChangesAsync();
     }

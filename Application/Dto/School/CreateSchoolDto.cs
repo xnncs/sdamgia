@@ -8,5 +8,5 @@ public class CreateSchoolDto
     public string Description { get; set; }
     public int AuthorId { get; set; }
     
-    public Subjects Subject { get; set; }
+    public int SubjectId { get; set; }
 }

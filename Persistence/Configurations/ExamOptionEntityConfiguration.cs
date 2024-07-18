@@ -13,5 +13,9 @@ public class ExamOptionEntityConfiguration: IEntityTypeConfiguration<ExamOptionE
 
         builder.HasMany(x => x.ExamTasks)
             .WithOne();
+
+        builder.HasOne(x => x.Subject)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

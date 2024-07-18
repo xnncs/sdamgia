@@ -28,5 +28,9 @@ public class SchoolEntityConfiguration : IEntityTypeConfiguration<SchoolEntity>
             .HasPrincipalKey<SchoolEntity>(x => x.Id)
             .HasForeignKey<TeacherEntity>(x => x.SchoolId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(x => x.Subject)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

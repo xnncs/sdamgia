@@ -1,22 +1,20 @@
 using AutoMapper;
 using Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;  
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    public UserRepository(ApplicationDbContext dbContext, IMapper mapper, ILogger<UserRepository> logger)
+    public UserRepository(ApplicationDbContext dbContext, IMapper mapper)
     {
-        _logger = logger;
         _mapper = mapper;
         _dbContext = dbContext;
     }
-
-    private readonly ILogger<UserRepository> _logger;
+    
     private readonly IMapper _mapper;
     private readonly ApplicationDbContext _dbContext;
     
@@ -42,9 +40,9 @@ public class UserRepository : IUserRepository
     {
         UserEntity? userEntity = await _dbContext.Users.AsNoTracking()
             .Include(x => x.Student)
-            .ThenInclude(x => x.School)
+            .ThenInclude(x => x!.School)
             .Include(x => x.Teacher)
-            .ThenInclude(x => x.School)
+            .ThenInclude(x => x!.School)
             .FirstOrDefaultAsync(x => x.Id == id);
         
         return _mapper.Map<UserEntity?, User?>(userEntity);

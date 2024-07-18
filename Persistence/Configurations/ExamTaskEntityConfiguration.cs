@@ -10,5 +10,9 @@ public class ExamTaskEntityConfiguration : IEntityTypeConfiguration<ExamTaskEnti
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
+        
+        builder.HasOne(x => x.Subject)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

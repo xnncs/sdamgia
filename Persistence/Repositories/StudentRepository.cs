@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Abstract;
+using Persistence.Database;
 using Persistence.Entities;
 
 namespace Persistence.Repositories;
@@ -46,14 +47,9 @@ public class StudentRepository : IStudentRepository
             .Include(x => x.Student)
             .FirstOrDefaultAsync(x => x.Id == userId);
         
-        if (userEntity == null)
+        if (userEntity?.Student == null)
         {
             return null;
-        }
-
-        if (userEntity.Student == null)
-        {
-            throw new Exception("This user is not a teacher");
         }
 
         return userEntity?.Student!.Id;
@@ -66,7 +62,7 @@ public class StudentRepository : IStudentRepository
             .FirstOrDefaultAsync(x => x.Id == studentId);
         if (studentEntity == null)
         {
-            throw new Exception("No such student with that id");
+            return false;
         }
 
         return studentEntity.School == null;

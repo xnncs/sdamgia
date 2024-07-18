@@ -2,6 +2,7 @@ using Application.Abstract;
 using Application.Abstract.StaticDataServices;
 using Application.Helpers;
 using Application.Services;
+using Application.Services.DataServices;
 using Application.Services.StaticDataServices;
 using Core.StaticInfoModels;
 using Microsoft.Extensions.DependencyInjection;

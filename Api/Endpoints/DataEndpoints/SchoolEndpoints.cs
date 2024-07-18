@@ -78,9 +78,12 @@ public static class SchoolEndpoints
     {
         int userId = authorizationService.GetUserIdFromJwt(context);
         School? school = await schoolService.GetByUserIdAsync(userId);
-        
-        
-        GetSchoolResponse schoolResponse = mapper.Map<School, GetSchoolResponse>(school);
+        if (school is null)
+        {
+            throw new Exception("You have no school");
+        }
+
+        GetSchoolResponse schoolResponse = GenerateGetSchoolResponseObject(school, mapper);
         
         return TypedResults.Ok(schoolResponse);
     }
@@ -121,5 +124,14 @@ public static class SchoolEndpoints
         contract.UserId = userId;
 
         return contract;
+    }
+
+    private static GetSchoolResponse GenerateGetSchoolResponseObject(School school, IMapper mapper)
+    {
+        GetSchoolResponse response = mapper.Map<School, GetSchoolResponse>(school);
+        response.SubjectName = school.Subject.Name;
+        response.StudentsNumber = school.Students.Count;    
+
+        return response;
     }
 }
