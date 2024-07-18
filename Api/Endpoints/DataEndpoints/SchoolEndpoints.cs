@@ -130,7 +130,8 @@ public static class SchoolEndpoints
     {
         GetSchoolResponse response = mapper.Map<School, GetSchoolResponse>(school);
         response.SubjectName = school.Subject.Name;
-        response.StudentsNumber = school.Students.Count;    
+        response.StudentsNumber = school.Students.Count;
+        response.AuthorId = school.Author.Id ?? -1;
 
         return response;
     }

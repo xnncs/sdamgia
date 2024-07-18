@@ -5,6 +5,7 @@ using Api.Contracts.Requests.Post;
 using Api.Contracts.Requests.School;
 using Api.Contracts.Requests.Subject;
 using Api.Contracts.Responses;
+using Api.Contracts.Responses.ExamTask;
 using Api.Contracts.Responses.ResponseHelpingModels;
 using Application.Dto;
 using Application.Dto.Auth;
@@ -70,6 +71,8 @@ public class AppMappingProfile : Profile
         CreateMap<CreateSubjectRequest, CreateSubjectDto>();
 
         CreateMap<UpdateSubjectRequest, UpdateSubjectDto>();
+
+        CreateMap<UpdateExamTaskRequest, UpdateExamTaskDto>();
     }
 
     private void CreateResponsesMaps()
@@ -78,6 +81,8 @@ public class AppMappingProfile : Profile
         CreateMap<School, GetSchoolResponse>();
 
         CreateMap<Page, PageHelperResponseModel>();
+
+        CreateMap<ExamTask, GetExamTaskResponse>();
     }
 
     private void CreateAllAnotherMaps()
@@ -85,5 +90,7 @@ public class AppMappingProfile : Profile
         CreateMap<UpdateSchoolDto, SchoolUpdatingModel>();
 
         CreateMap<UpdateSubjectDto, SubjectUpdatingModel>();
+
+        CreateMap<UpdateExamTaskDto, ExamTaskUpdatingModel>();
     }
 }

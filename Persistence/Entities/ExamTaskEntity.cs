@@ -12,4 +12,7 @@ public record ExamTaskEntity
     
     public TeacherEntity Author { get; set; }
     public int AuthorId { get; set; }
+    
+    public DateTime DateOfCreating { get; set; }
+    public List<DateTime> DatesOfUpdating { get; set; }
 }

@@ -14,6 +14,8 @@ public record GetSchoolResponse
     
     public PageHelperResponseModel Page { get; set; }
     
+    public int AuthorId { get; set; }
+    
     public string SubjectName { get; set; }
     
     public DateTime DateOfCreating { get; set; }
